@@ -20,12 +20,12 @@ public class TransferApi {
 
     public Route createTransferRoute() {
         return (req, res) -> {
-            TransferRequest transferRequest = gson.fromJson(req.body(), TransferRequest.class);
-            if (transferRequest == null) {
-                throw new IncorrectInstructionException("Please specify source, destination accounts and amount to transfer");
-
-            }
             try {
+                TransferRequest transferRequest = gson.fromJson(req.body(), TransferRequest.class);
+                if (transferRequest == null) {
+                    throw new IncorrectInstructionException("Please specify source, destination accounts and amount to transfer");
+
+                }
                 TransferReceipt receipt = accountService.transfer(transferRequest.getFromAccount(),
                         transferRequest.getToAccount(),
                         transferRequest.getAmountCents());
