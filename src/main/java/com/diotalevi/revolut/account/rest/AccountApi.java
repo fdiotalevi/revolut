@@ -2,7 +2,7 @@ package com.diotalevi.revolut.account.rest;
 
 import com.diotalevi.revolut.account.service.AccountService;
 import com.diotalevi.revolut.account.service.EntityNotExistentException;
-import com.diotalevi.revolut.account.service.OperationNotPermittedException;
+import com.diotalevi.revolut.account.service.IncorrectInstructionException;
 import com.google.gson.Gson;
 import spark.Route;
 
@@ -22,11 +22,11 @@ public class AccountApi {
             try {
                 AccountCreationRequest account = gson.fromJson(req.body(), AccountCreationRequest.class);
                 if (account == null) {
-                    throw new OperationNotPermittedException("Please specify account owner and balance");
+                    throw new IncorrectInstructionException("Please specify account owner and balance");
                 }
                 return gson.toJson(accountService.createAccountWithBalance(account.getOwner(), account.getBalanceCents()));
             }
-            catch (OperationNotPermittedException ex) {
+            catch (IncorrectInstructionException ex) {
                 res.status(400);
                 return gson.toJson(new ErrorResponse(ex.getMessage()));
             }
