@@ -76,7 +76,56 @@ public class TransferApiTest {
 
         HttpResponse<TransferReceipt> response = transferMoney(new TransferRequest(fromAccountId, toAccountId, 201));
         assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
+    }
 
+    @Test
+    public void returns400IfFromAccountIsNotSpecified() {
+        UUID toAccountId = createAccount(new AccountCreationRequest(0, "to")).getBody().getId();
+
+        HttpResponse<TransferReceipt> response = transferMoney(new TransferRequest(null, toAccountId, 201));
+        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
+    }
+
+    @Test
+    public void returns400IfToAccountNotSpecified() {
+        UUID fromAccountId = createAccount(new AccountCreationRequest(200, "from")).getBody().getId();
+
+        HttpResponse<TransferReceipt> response = transferMoney(new TransferRequest(fromAccountId, null, 201));
+        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
+    }
+
+    @Test
+    public void returns400IfTransferZero() {
+        UUID fromAccountId = createAccount(new AccountCreationRequest(200, "from")).getBody().getId();
+        UUID toAccountId = createAccount(new AccountCreationRequest(0, "to")).getBody().getId();
+
+        HttpResponse<TransferReceipt> response = transferMoney(new TransferRequest(fromAccountId, toAccountId, 0));
+        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
+    }
+
+    @Test
+    public void returns400IfTransferNegativeAmount() {
+        UUID fromAccountId = createAccount(new AccountCreationRequest(200, "from")).getBody().getId();
+        UUID toAccountId = createAccount(new AccountCreationRequest(0, "to")).getBody().getId();
+
+        HttpResponse<TransferReceipt> response = transferMoney(new TransferRequest(fromAccountId, toAccountId, -201));
+        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
+    }
+
+    @Test
+    public void returns400IfFromAccountDoesntExist() {
+        UUID toAccountId = createAccount(new AccountCreationRequest(0, "to")).getBody().getId();
+
+        HttpResponse<TransferReceipt> response = transferMoney(new TransferRequest(UUID.randomUUID(), toAccountId, 1));
+        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
+    }
+
+    @Test
+    public void returns400IfToAccountDoesntExist() {
+        UUID fromAccountId = createAccount(new AccountCreationRequest(200, "from")).getBody().getId();
+
+        HttpResponse<TransferReceipt> response = transferMoney(new TransferRequest(fromAccountId, UUID.randomUUID(), 1));
+        assertEquals(HttpStatus.SC_BAD_REQUEST, response.getStatus());
     }
 
 }

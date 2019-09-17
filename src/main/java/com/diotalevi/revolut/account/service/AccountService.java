@@ -34,11 +34,23 @@ public class AccountService {
      *
      */
     public TransferReceipt transfer(UUID fromAccountId, UUID toAccountId, long cents) throws AccountOperationNotPermittedException {
-        if (cents < 0) {
-            throw new AccountOperationNotPermittedException("Cannot transfer a negative amount");
+        if (cents <= 0) {
+            throw new AccountOperationNotPermittedException("Cannot transfer zero or a negative amount");
+        }
+        if (fromAccountId == null) {
+            throw new AccountOperationNotPermittedException("The source account must be specified");
+        }
+        if (toAccountId == null) {
+            throw new AccountOperationNotPermittedException("The destination account must be specified");
         }
         Account fromAccount = accountStore.get(fromAccountId);
         Account toAccount = accountStore.get(toAccountId);
+        if (fromAccount == null) {
+            throw new AccountOperationNotPermittedException("The source account does not exist");
+        }
+        if (toAccount == null) {
+            throw new AccountOperationNotPermittedException("The destination account does not exist");
+        }
 
         synchronized(fromAccount) { //lock only the debited account
             if (fromAccount.getBalanceCents().longValue() < cents) {
