@@ -3,8 +3,8 @@
 This project provides a simple implementation for the following API
 - account creation
 - account retrieval 
-- money transfer between account
-- retrieve money transfer receipt
+- money transfer between accounts
+- retrieve money transfer receipts
 
 To launch the API server, locate the class 
 `com.diotalevi.revolut.account.StartApiServer` and launch it.
@@ -17,7 +17,7 @@ In both cases, the API server will be available at
 
 # API
 
-The server offers 4 API endpoint
+The server offers 4 API endpoints
 - account creation
 - account retrieval 
 - money transfer between account
@@ -81,8 +81,9 @@ with a body like the example
 }
 ```
 
+All the fields are mandatory.
 
-A successful transfer will return a Receipt 
+A successful transfer will return a receipt 
 
 ```$json
 {"id":"fd36b6a7-c8c4-48f0-a8ef-719be01edad9","fromAccount":"0c1356fb-03b2-497f-94ab-0662730463c3","toAccount":"73563eb0-b47f-42e7-9bd1-012b49ea744a","amountCents":3}
