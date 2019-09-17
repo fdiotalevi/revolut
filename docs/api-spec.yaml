@@ -1,0 +1,173 @@
+swagger: "2.0"
+info:
+  description: "Swagger spec of the Account and Transfer API"
+  version: "0.1.0"
+  title: "Account and Transfer API"
+host: "localhost:4567"
+basePath: "/"
+tags:
+  - name: "Account"
+    description: "Operations on Accounts"
+  - name: "Transfer"
+    description: "Money Transfers"
+schemes:
+  - "http"
+paths:
+  /accounts:
+    post:
+      tags:
+        - "Account"
+      summary: "Create a new Account"
+      operationId: "createAccount"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Account definition"
+          required: true
+          schema:
+            $ref: "#/definitions/AccountCreationRequest"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Account"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /accounts/{accountId}:
+    get:
+      tags:
+        - "Account"
+      summary: "Find Account by ID"
+      operationId: "getAccountById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "accountId"
+          in: "path"
+          description: "ID of account to return"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Account"
+        404:
+          description: "Account not found"
+  /transfers:
+    post:
+      tags:
+        - "Transfer"
+      summary: "Execute a money transfer"
+      operationId: "executeTransfer"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Money transfer instruction"
+          required: true
+          schema:
+            $ref: "#/definitions/TransferRequest"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/TransferReceipt"
+        400:
+          description: "Error during the transfer caused by incorrect input data"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /transfers/{transferId}:
+    get:
+      tags:
+        - "Transfer"
+      summary: "Find money transfer receipt by ID"
+      operationId: "getReceiptById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "transferId"
+          in: "path"
+          description: "ID of receipt to return"
+          required: true
+          type: "string"
+          format: "uuid"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/TransferReceipt"
+        404:
+          description: "Receipt not found"
+
+definitions:
+  AccountCreationRequest:
+    type: "object"
+    properties:
+      owner:
+        type: "string"
+        description: "Account Owner"
+      balanceCents:
+        type: "number"
+        description: "Account Balance in cents"
+  Account:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "Account Unique Id"
+      owner:
+        type: "string"
+        description: "Account Owner"
+      balanceCents:
+        type: "number"
+        description: "Account Balance in cents"
+  TransferRequest:
+    type: "object"
+    properties:
+      fromAccount:
+        type: "string"
+        format: "uuid"
+        description: "Account Id to transfer money from"
+      toAccount:
+        type: "string"
+        format: "uuid"
+        description: "Account Id to transfer money to"
+      amountCents:
+        type: "number"
+        description: "Amount to transfer in cents"
+  TransferReceipt:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "Receipt Unique Id"
+      fromAccount:
+        type: "string"
+        format: "uuid"
+        description: "Account Id to transfer money from"
+      toAccount:
+        type: "string"
+        format: "uuid"
+        description: "Account Id to transfer money to"
+      amountCents:
+        type: "number"
+        description: "Amount to transfer in cents"
+  ErrorResponse:
+    type: "object"
+    properties:
+      description:
+        type: "string"
+        description: "Description of the error"
