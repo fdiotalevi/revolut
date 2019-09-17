@@ -12,7 +12,7 @@ public class AccountServiceTest {
     private AccountService accountService = new AccountService();
 
     @Test
-    public void canCreateAndGetEmptyAccount() throws EntityNotExistentException {
+    public void canCreateAndGetEmptyAccount() throws EntityNotExistentException, OperationNotPermittedException {
         UUID accountId = accountService.createAccount("John").getId();
 
         Account account = accountService.getAccount(accountId);
@@ -21,7 +21,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void canCreateAndGetAccountWithBalance() throws EntityNotExistentException {
+    public void canCreateAndGetAccountWithBalance() throws EntityNotExistentException, OperationNotPermittedException {
         UUID accountId = accountService.createAccountWithBalance("Mark", 101l).getId();
         Account account = accountService.getAccount(accountId);
         assertEquals(101l, account.getBalanceCents().longValue());
@@ -34,7 +34,7 @@ public class AccountServiceTest {
     }
 
     @Test
-    public void canTransferMoney() throws EntityNotExistentException, AccountOperationNotPermittedException {
+    public void canTransferMoney() throws EntityNotExistentException, OperationNotPermittedException {
         UUID accountFrom = accountService.createAccountWithBalance("Susan", 100).getId();
         UUID accountTo = accountService.createAccount("Tony").getId();
         TransferReceipt transferReceipt = accountService.transfer(accountFrom, accountTo, 42);
@@ -46,15 +46,15 @@ public class AccountServiceTest {
         assertEquals(42l, accountService.getAccount(accountTo).getBalanceCents().longValue());
     }
 
-    @Test(expected = AccountOperationNotPermittedException.class)
-    public void cannotTransferNegativeAmount() throws AccountOperationNotPermittedException {
+    @Test(expected = OperationNotPermittedException.class)
+    public void cannotTransferNegativeAmount() throws OperationNotPermittedException {
         UUID accountFrom = accountService.createAccountWithBalance("Ann", 100).getId();
         UUID accountTo = accountService.createAccount("Joe").getId();
         accountService.transfer(accountFrom, accountTo, -1);
     }
 
-    @Test(expected = AccountOperationNotPermittedException.class)
-    public void cannotTransferOverBalance() throws AccountOperationNotPermittedException {
+    @Test(expected = OperationNotPermittedException.class)
+    public void cannotTransferOverBalance() throws OperationNotPermittedException {
         UUID accountFrom = accountService.createAccountWithBalance("Helen", 100).getId();
         UUID accountTo = accountService.createAccount("Paul").getId();
         accountService.transfer(accountFrom, accountTo, 101);

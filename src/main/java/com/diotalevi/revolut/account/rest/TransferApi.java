@@ -1,8 +1,8 @@
 package com.diotalevi.revolut.account.rest;
 
-import com.diotalevi.revolut.account.service.AccountOperationNotPermittedException;
 import com.diotalevi.revolut.account.service.AccountService;
 import com.diotalevi.revolut.account.service.EntityNotExistentException;
+import com.diotalevi.revolut.account.service.OperationNotPermittedException;
 import com.diotalevi.revolut.account.service.TransferReceipt;
 import com.google.gson.Gson;
 import spark.Route;
@@ -21,6 +21,10 @@ public class TransferApi {
     public Route createTransferRoute() {
         return (req, res) -> {
             TransferRequest transferRequest = gson.fromJson(req.body(), TransferRequest.class);
+            if (transferRequest == null) {
+                throw new OperationNotPermittedException("Please specify source, destination accounts and amount to transfer");
+
+            }
             try {
                 TransferReceipt receipt = accountService.transfer(transferRequest.getFromAccount(),
                         transferRequest.getToAccount(),
@@ -28,7 +32,7 @@ public class TransferApi {
                 res.status(200);
                 return gson.toJson(receipt);
             }
-            catch (AccountOperationNotPermittedException ex) {
+            catch (OperationNotPermittedException ex) {
                 res.status(400);
                 return gson.toJson(new ErrorResponse(ex.getMessage()));
             }
