@@ -21,7 +21,7 @@ public class StartApiServer {
         get("/accounts/:accountId", accountApi.getAccountRoute());
 
         post("/transfers", transferApi.createTransferRoute());
-        post("/transfers/:receiptId", transferApi.getReceiptRoute());
+        get("/transfers/:receiptId", transferApi.getReceiptRoute());
 
         exception(JsonSyntaxException.class, (exc, req, resp) -> {
             resp.status(400);

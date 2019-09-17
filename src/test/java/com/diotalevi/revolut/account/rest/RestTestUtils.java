@@ -44,7 +44,7 @@ public class RestTestUtils {
     }
 
     public static HttpResponse<TransferReceipt> getReceipt(UUID receiptId) {
-        return Unirest.post("http://localhost:4567/transfers/" + receiptId.toString()).asObject(TransferReceipt.class);
+        return Unirest.get("http://localhost:4567/transfers/" + receiptId.toString()).asObject(TransferReceipt.class);
     }
 
 }

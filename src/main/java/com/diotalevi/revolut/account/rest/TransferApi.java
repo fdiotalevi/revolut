@@ -32,6 +32,10 @@ public class TransferApi {
                 res.status(200);
                 return gson.toJson(receipt);
             }
+            catch (IllegalArgumentException iae) { //not a UUID
+                res.status(400);
+                return gson.toJson(new ErrorResponse("Either from or to account id is in invalid format"));
+            }
             catch (IncorrectInstructionException ex) {
                 res.status(400);
                 return gson.toJson(new ErrorResponse(ex.getMessage()));
@@ -45,6 +49,10 @@ public class TransferApi {
             String receiptId = req.params("receiptId");
             try {
                 return gson.toJson(accountService.getTransferReceipt(UUID.fromString(receiptId)));
+            }
+            catch (IllegalArgumentException iae) { //not a UUID
+                res.status(400);
+                return gson.toJson(new ErrorResponse("Invalid receipt id"));
             }
             catch (EntityNotExistentException ex) {
                 res.status(404);

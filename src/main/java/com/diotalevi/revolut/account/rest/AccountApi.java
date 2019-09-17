@@ -40,6 +40,10 @@ public class AccountApi {
             try {
                 return gson.toJson(accountService.getAccount(UUID.fromString(accountId)));
             }
+            catch (IllegalArgumentException iae) { //not a UUID
+                res.status(400);
+                return gson.toJson(new ErrorResponse("Invalid account id"));
+            }
             catch (EntityNotExistentException ex) {
                 res.status(404);
                 return gson.toJson(new ErrorResponse("Account doesn't exist"));
